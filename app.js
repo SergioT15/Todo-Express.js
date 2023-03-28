@@ -1,84 +1,123 @@
-const createError = require('http-errors');
-const express = require('express');
-const path = require('path');
-const cookieParser = require('cookie-parser');
-const logger = require('morgan');
-
-const indexRouter = require('./routes/index');
-const usersRouter = require('./routes/users');
-
+const express = require("express");
+const fs = require("fs");
+    
 const app = express();
-
-// view engine setup
-app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'pug');
-
-app.use(logger('dev'));
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
-app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
-
-app.use('/', indexRouter);
-app.use('/users', usersRouter);
-
-
-
-// catch 404 and forward to error handler
-app.use(function(req, res, next) {
-  next(createError(404));
+const jsonParser = express.json();
+  
+app.use(express.static(__dirname + "/public"));
+  
+const filePath = "users.json";
+app.get("/api/users", function(req, res){
+       
+    const content = fs.readFileSync(filePath,"utf8");
+    const users = JSON.parse(content);
+    res.send(users);
+});
+// получение одного пользователя по id
+app.get("/api/users/:id", function(req, res){
+       
+    const id = req.params.id; // получаем id
+    const content = fs.readFileSync(filePath, "utf8");
+    const users = JSON.parse(content);
+    let user = null;
+    // находим в массиве пользователя по id
+    for(var i=0; i<users.length; i++){
+        if(users[i].id==id){
+            user = users[i];
+            break;
+        }
+    }
+    // отправляем пользователя
+    if(user){
+        res.send(user);
+    }
+    else{
+        res.status(404).send();
+    }
+});
+// получение отправленных данных
+app.post("/api/users", jsonParser, function (req, res) {
+      
+    if(!req.body) return res.sendStatus(400);
+      
+    const userName = req.body.name;
+    const userAge = req.body.age;
+    let user = {name: userName, age: userAge};
+      
+    let data = fs.readFileSync(filePath, "utf8");
+    let users = JSON.parse(data);
+      
+    // находим максимальный id
+    const id = Math.max.apply(Math,users.map(function(o){return o.id;}))
+    // увеличиваем его на единицу
+    user.id = id+1;
+    // добавляем пользователя в массив
+    users.push(user);
+    data = JSON.stringify(users);
+    // перезаписываем файл с новыми данными
+    fs.writeFileSync("users.json", data);
+    res.send(user);
+});
+ // удаление пользователя по id
+app.delete("/api/users/:id", function(req, res){
+       
+    const id = req.params.id;
+    let data = fs.readFileSync(filePath, "utf8");
+    let users = JSON.parse(data);
+    let index = -1;
+    // находим индекс пользователя в массиве
+    for(var i=0; i < users.length; i++){
+        if(users[i].id==id){
+            index=i;
+            break;
+        }
+    }
+    if(index > -1){
+        // удаляем пользователя из массива по индексу
+        const user = users.splice(index, 1)[0];
+        data = JSON.stringify(users);
+        fs.writeFileSync("users.json", data);
+        // отправляем удаленного пользователя
+        res.send(user);
+    }
+    else{
+        res.status(404).send();
+    }
+});
+// изменение пользователя
+app.put("/api/users", jsonParser, function(req, res){
+       
+    if(!req.body) return res.sendStatus(400);
+      
+    const userId = req.body.id;
+    const userName = req.body.name;
+    const userAge = req.body.age;
+      
+    let data = fs.readFileSync(filePath, "utf8");
+    const users = JSON.parse(data);
+    let user;
+    for(var i=0; i<users.length; i++){
+        if(users[i].id==userId){
+            user = users[i];
+            break;
+        }
+    }
+    // изменяем данные у пользователя
+    if(user){
+        user.age = userAge;
+        user.name = userName;
+        data = JSON.stringify(users);
+        fs.writeFileSync("users.json", data);
+        res.send(user);
+    }
+    else{
+        res.status(404).send(user);
+    }
+});
+   
+app.listen(3000, function(){
+    console.log("Сервер ожидает подключения...");
 });
 
-// error handler
-app.use(function(err, req, res, next) {
-  // set locals, only providing error in development
-  res.locals.message = err.message;
-  res.locals.error = req.app.get('env') === 'development' ? err : {};
-
-  // render the error page
-  res.status(err.status || 500);
-  res.render('error');
-});
-
-module.exports = app;
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//Today I
-// Learned how to create server
-// Learned how to work with server 
-// Learned how to use pipe
-// Tomorrow I will
-// Continue learning express
