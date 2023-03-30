@@ -5,7 +5,7 @@ module.exports.getToDo = async (req, res) => {
   res.send(toDo);
 };
 
-module.exports.saveToDo = async (req, res) => {
+module.exports.addToDo = async (req, res) => {
   const { text } = req.body;
 
   ToDoModel.create({ text }).then((data) => {

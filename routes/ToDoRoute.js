@@ -1,7 +1,7 @@
 const { Router } = require("express");
 const {
   getToDo,
-  saveToDo,
+  addToDo,
   updateToDo,
   deleteToDo,
   completedToDo,
@@ -10,7 +10,7 @@ const {
 const router = Router();
 
 router.get("/", getToDo);
-router.post("/save", saveToDo);
+router.post("/add", addToDo);
 router.put("/update", updateToDo);
 router.delete("/delete", deleteToDo);
 router.put("/completed", completedToDo);
