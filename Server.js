@@ -1,6 +1,6 @@
 const express = require("express");
 const mongoose = require("mongoose");
-const cors = require("cors")
+const cors = require("cors");
 
 const routes = require("./routes/ToDoRoute");
 
@@ -21,4 +21,3 @@ mongoose
 app.use(routes);
 
 app.listen(PORT, () => console.log(`Listerning on ${PORT}`));
-
