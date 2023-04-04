@@ -12,9 +12,9 @@ const router = Router();
 
 router.get("/", getToDo);
 router.post("/add", addToDo);
-router.put("/update", updateToDo);
+router.patch("/update", updateToDo);
 router.delete("/delete", deleteToDo);
-router.put("/completed", completedToDo);
-router.put("/filtered", filteredNameToDo);
+router.patch("/completed", completedToDo);
+router.patch("/filtered", filteredNameToDo);
 
 module.exports = router;

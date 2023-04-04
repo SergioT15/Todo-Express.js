@@ -9,7 +9,7 @@ module.exports.getToDo = async (req, res) => {
 };
 
 module.exports.addToDo = async (req, res) => {
-  const { text } = req.body;
+  const { text } = req.body.data;
   ToDoModel.create({ text }).then((data) => {
     console.log("Added Successfully");
     console.log(data);
