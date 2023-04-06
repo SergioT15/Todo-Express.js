@@ -4,17 +4,17 @@ const {
   addToDo,
   updateToDo,
   deleteToDo,
-  completedToDo,
-
+  deleteAllToDo,
+  completedAllToDo,
 } = require("../controllers/ToDoController");
 
 const router = Router();
 
 router.get("/", getToDo);
 router.post("/add", addToDo);
-router.patch("/:_id", updateToDo);
 router.delete("/delete", deleteToDo);
-router.patch("/:_id", completedToDo);
-
+router.delete("/deleteAll", deleteAllToDo);
+router.patch("/completedAll", completedAllToDo);
+router.patch("/:_id", updateToDo);
 
 module.exports = router;

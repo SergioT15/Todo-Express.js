@@ -30,34 +30,92 @@ module.exports.deleteToDo = async (req, res) => {
 
 module.exports.updateToDo = async (req, res) => {
   try {
-    const { text } = req.body;
-
-    const updatedTodo = await ToDoModel.findByIdAndUpdate(
-      req.params._id,
-      { text },
-      {
-        new: true,
-      }
-    );
-    res.json(updatedTodo);
+    await ToDoModel.findByIdAndUpdate(req.params._id, req.body, {
+      new: true,
+    });
+    res.json("Updated Successfully");
   } catch (err) {
     res.status(500).send(err.message);
   }
 };
 
-module.exports.completedToDo = async (req, res) => {
+// completed
+module.exports.deleteAllToDo = async (req, res) => {
   try {
-    const { completed } = req.body;
-    console.log(req.params._id);
-    const updatedTodo = await ToDoModel.findByIdAndUpdate(
-      req.params._id,
-      { completed },
-      {
-        new: true,
-      }
-    );
-    res.json(updatedTodo);
+    await ToDoModel.deleteMany({ completed: true }, { new: true });
+    const todos = await ToDoModel.find({});
+    res.json(todos);
   } catch (err) {
     res.status(500).send(err.message);
   }
 };
+
+// module.exports.completedAllToDo = async (req, res) => {
+//   try {
+//     const todos = await ToDoModel.find();
+//     const isCheckOne = todos.some((todo) => {
+//       !todo.completed;
+//     });
+//     console.log(isCheckOne);
+//     await ToDoModel.updateMany({ completed: isCheckOne }, { new: true });
+
+//     const newTodo = await ToDoModel.find();
+// console.log(22, newTodo);
+//     res.json(newTodo);
+//   } catch (err) {
+//     res.status(500).send(err.message);
+//   }
+// };
+
+module.exports.completedAllToDo = async (req, res) => {
+  try { 
+    const todos = await ToDoModel.find();
+    const isCheckOne = todos.some((todo) => {
+      !todo.completed;
+    });
+    console.log(5555);
+    const newTodos = todos.map((todo) => {
+      return { ...todo, completed: isCheckOne };
+    });
+    // todos.forEach((item) => {
+    //   item.completed = isCheckOne;
+    // });
+
+console.log(newTodos._doc);
+
+    res.json(newTodos);
+  } catch (err) {
+    res.status(500).send(err.message);
+  }
+};
+
+// module.exports.completedAllToDo= async (req, res) => {
+//   try {
+//     const { completedAll } = req.body;
+//     await ToDoModel.updateMany(
+//       {},
+//       { completed: completedAll },
+//       { new: true }
+//     );
+//     const todos = await ToDoModel.find({});
+//     res.json(todos);
+//   } catch (err) {
+//     res.status(500).send(err.message);
+//   }
+// };
+
+// module.exports.completedAllToDo = async (req, res) => {
+//   try {
+//     const todos = await ToDoModel.find();
+//     const isCheckOne = todos.some((todo) => {
+//       !todo.completed;
+//     });
+//     await ToDoModel.updateMany({ completed: isCheckOne }, { new: true });
+
+//     const newTodo = await ToDoModel.find();
+// console.log(22, newTodo);
+//     res.json(newTodo);
+//   } catch (err) {
+//     res.status(500).send(err.message);
+//   }
+// };
