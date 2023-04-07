@@ -11,9 +11,9 @@ const {
 const router = Router();
 
 router.get("/", getToDo);
-router.post("/add", addToDo);
-router.delete("/delete", deleteToDo);
-router.delete("/deleteAll", deleteAllToDo);
+router.post("/", addToDo);
+router.delete("/", deleteToDo);
+router.delete("/All", deleteAllToDo);
 router.patch("/completedAll", completedAllToDo);
 router.patch("/:_id", updateToDo);
 
