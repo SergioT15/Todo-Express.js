@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
 
 const todoSchema = new mongoose.Schema({
   text: {
@@ -12,7 +12,7 @@ const todoSchema = new mongoose.Schema({
   filter: {
     type: String,
     default: "All",
-  }
+  },
 });
 
 module.exports = mongoose.model("ToDo", todoSchema);
