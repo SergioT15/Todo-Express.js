@@ -1,8 +1,17 @@
 const ToDoModel = require("../models/ToDoModel");
 
 module.exports.getToDo = async (req, res) => {
-  const AllTodo = await ToDoModel.find();
-  res.send(AllTodo);
+  const page = req.params.page || 0;
+  const itemPerPage = 5;
+  // const page = parseInt(req.params.page);
+  // const itemPerPage = parseInt(req.params.limit);
+  // console.log(page * itemPerPage, page, itemPerPage);
+  const count = await ToDoModel.find().countDocuments();
+  const AllTodo = await ToDoModel.find()
+    .skip(page * itemPerPage)
+    .limit(itemPerPage);
+
+  res.send({ todos: AllTodo, count });
 };
 
 module.exports.addToDo = async (req, res) => {
@@ -60,3 +69,14 @@ module.exports.completedAllToDo = async (req, res) => {
     res.status(500).send(err.message);
   }
 };
+
+// module.exports.paginateToDo = async (req, res) => {
+//   try {
+//     const page = req.body.p || 0;
+//     const itemPerPage = 5;
+//     await ToDoModel.skip(page * itemPerPage).limit(itemPerPage);
+//     console.log(page);
+//   } catch (err) {
+//     res.status(500).send(err.message);
+//   }
+// };
