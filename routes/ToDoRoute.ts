@@ -10,7 +10,7 @@ const {
 
 const router = Router();
 
-router.get("/:page?filter", getToDo);
+router.get("/:page", getToDo);
 router.post("/", addToDo);
 router.delete("/", deleteToDo);
 router.delete("/All", deleteAllToDo);

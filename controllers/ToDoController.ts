@@ -9,18 +9,17 @@ const x = (filterItem)=>{
 module.exports.getToDo = async (req, res) => {
   const page = req.params.page || 0;
   const itemPerPage = 5;
-
   const filterItem = req.query.filter;
-  const filterValue = x(filterItem)
-
+  const filterValue = x(filterItem);
   const AllTodo = await ToDoModel.find(filterValue)
     .skip(page * itemPerPage)
     .limit(itemPerPage);
-
   const count = await ToDoModel.find(filterValue).countDocuments();
-  const pagesLenght = Math.ceil(count/itemPerPage);
+  const pagesLenght = Math.ceil(count / itemPerPage);
+  const pages = Array.from({ length: pagesLenght }, (_, index) => index);
+  console.log(page);
 
-  res.send({ todos: AllTodo, count, pagesLenght });
+  res.send({ todos: AllTodo, count, pages });
 };
 
 module.exports.addToDo = async (req, res) => {
