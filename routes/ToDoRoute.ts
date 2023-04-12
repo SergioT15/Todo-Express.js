@@ -10,7 +10,7 @@ const {
 
 const router = Router();
 
-router.get("/:page", getToDo);
+router.get("/:page?filter", getToDo);
 router.post("/", addToDo);
 router.delete("/", deleteToDo);
 router.delete("/All", deleteAllToDo);
@@ -18,4 +18,3 @@ router.patch("/completedAll", completedAllToDo);
 router.patch("/:_id", updateToDo);
 
 module.exports = router;
-// :page/:itemPerPage

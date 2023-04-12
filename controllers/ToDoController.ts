@@ -1,24 +1,33 @@
 const ToDoModel = require("../models/ToDoModel");
 
+const x = (filterItem)=>{
+  if(filterItem==="Active") {return {completed: false}}
+  if(filterItem==="Completed") {return {completed: true}}
+  return {}
+
+}
 module.exports.getToDo = async (req, res) => {
   const page = req.params.page || 0;
   const itemPerPage = 5;
-  // const page = parseInt(req.params.page);
-  // const itemPerPage = parseInt(req.params.limit);
-  // console.log(page * itemPerPage, page, itemPerPage);
-  const count = await ToDoModel.find().countDocuments();
-  const AllTodo = await ToDoModel.find()
+
+  const filterItem = req.query.filter;
+  const filterValue = x(filterItem)
+
+  const AllTodo = await ToDoModel.find(filterValue)
     .skip(page * itemPerPage)
     .limit(itemPerPage);
 
-  res.send({ todos: AllTodo, count });
+  const count = await ToDoModel.find(filterValue).countDocuments();
+  const pagesLenght = Math.ceil(count/itemPerPage);
+
+  res.send({ todos: AllTodo, count, pagesLenght });
 };
 
 module.exports.addToDo = async (req, res) => {
   const { text } = req.body.data;
   ToDoModel.create({ text }).then((data) => {
     console.log("Added Successfully");
-    console.log(data);
+    console.log("data>>>", data);
     res.send(data);
   });
 };
@@ -69,14 +78,3 @@ module.exports.completedAllToDo = async (req, res) => {
     res.status(500).send(err.message);
   }
 };
-
-// module.exports.paginateToDo = async (req, res) => {
-//   try {
-//     const page = req.body.p || 0;
-//     const itemPerPage = 5;
-//     await ToDoModel.skip(page * itemPerPage).limit(itemPerPage);
-//     console.log(page);
-//   } catch (err) {
-//     res.status(500).send(err.message);
-//   }
-// };
